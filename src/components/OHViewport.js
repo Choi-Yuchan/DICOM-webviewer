@@ -73,6 +73,14 @@ function OHViewport(){
             viewportOverlayComponent={CustomOverlay}
             />
             <div>
+                <div>Active Tool:</div>
+                <select>
+                  <option>Wwwc</option>
+                  <option>Zoom</option>
+                  <option>Pan</option>
+                  <option>Length</option>
+                  <option>Angle</option>
+                </select>
                 <button onClick={() => SetPlayState(!playState)}>
                     {playState ? 'Stop' : 'Start'}
                 </button>
