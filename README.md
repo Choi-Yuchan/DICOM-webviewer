@@ -3,9 +3,9 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 # You have to download before you get started.
-npm install; 
-if it isn't work 
-npm i cornerstone-core cornerstone-math cornerstone-tools cornerstone-wado-image-loader cornerstone-web-image-loader dicom-parser hammerjs react-cornerstone-viewport styled-components;
+`npm install;` 
+### if it isn't work 
+`npm i cornerstone-core cornerstone-math cornerstone-tools cornerstone-wado-image-loader cornerstone-web-image-loader dicom-parser hammerjs react-cornerstone-viewport styled-components;`
 
 ## Available Scripts
 
