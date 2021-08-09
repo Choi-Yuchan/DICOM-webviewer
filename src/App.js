@@ -1,5 +1,5 @@
 import React from 'react';
-import styled, { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle } from 'styled-components';
 import OHViewport from './components/OHViewport';
 import initCornerstone from './extenstion/InitCornerstone';
 
