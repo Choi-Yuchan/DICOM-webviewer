@@ -1,64 +1,91 @@
 import { useState } from 'react';
-import CornerstoneViewport from 'react-cornerstone-viewport';
 import styled from 'styled-components';
+import ViewportLayer from './ViewportLayer';
+import ViewportTools from './ViewportTools';
 // import CustomOverlay from './CustomOverlay';
 
 const stack1 = [
-    'dicomweb://s3.amazonaws.com/lury/PTCTStudy/1.3.6.1.4.1.25403.52237031786.3872.20100510032220.7.dcm',
-    'dicomweb://s3.amazonaws.com/lury/PTCTStudy/1.3.6.1.4.1.25403.52237031786.3872.20100510032220.8.dcm',
-    'dicomweb://s3.amazonaws.com/lury/PTCTStudy/1.3.6.1.4.1.25403.52237031786.3872.20100510032220.9.dcm',
-    'dicomweb://s3.amazonaws.com/lury/PTCTStudy/1.3.6.1.4.1.25403.52237031786.3872.20100510032220.10.dcm',
-    'dicomweb://s3.amazonaws.com/lury/PTCTStudy/1.3.6.1.4.1.25403.52237031786.3872.20100510032220.11.dcm',
-    'dicomweb://s3.amazonaws.com/lury/PTCTStudy/1.3.6.1.4.1.25403.52237031786.3872.20100510032220.12.dcm',
+    "wadouri:https://ontacthealth.s3.ap-northeast-2.amazonaws.com/DV154717/K8SKNAO0",
+    "wadouri:https://ontacthealth.s3.ap-northeast-2.amazonaws.com/DV154717/K8SKNB02",
+    "wadouri:https://ontacthealth.s3.ap-northeast-2.amazonaws.com/DV154717/K8SKNB84",
+    "wadouri:https://ontacthealth.s3.ap-northeast-2.amazonaws.com/DV154717/K8SKNBG6",
+    "wadouri:https://ontacthealth.s3.ap-northeast-2.amazonaws.com/DV154717/K8SKNBO8",
+    "wadouri:https://ontacthealth.s3.ap-northeast-2.amazonaws.com/DV154717/K8SKNC0A",
+    "wadouri:https://ontacthealth.s3.ap-northeast-2.amazonaws.com/DV154717/K8SKNC8C",
+    "wadouri:https://ontacthealth.s3.ap-northeast-2.amazonaws.com/DV154717/K8SKNCGE",
+    "wadouri:https://ontacthealth.s3.ap-northeast-2.amazonaws.com/DV154717/K8SKNCOG",
+    "wadouri:https://ontacthealth.s3.ap-northeast-2.amazonaws.com/DV154717/K8SKND0I",
+    "wadouri:https://ontacthealth.s3.ap-northeast-2.amazonaws.com/DV154717/K8SKND8K",
+    "wadouri:https://ontacthealth.s3.ap-northeast-2.amazonaws.com/DV154717/K8SKNDGM",
+    "wadouri:https://ontacthealth.s3.ap-northeast-2.amazonaws.com/DV154717/K8SKNDOO",
+    "wadouri:https://ontacthealth.s3.ap-northeast-2.amazonaws.com/DV154717/K8SKNE0Q",
+    "wadouri:https://ontacthealth.s3.ap-northeast-2.amazonaws.com/DV154717/K8SKNE8S",
+    "wadouri:https://ontacthealth.s3.ap-northeast-2.amazonaws.com/DV154717/K8SKNEP0",
+    "wadouri:https://ontacthealth.s3.ap-northeast-2.amazonaws.com/DV154717/K8SKNG12",
+    "wadouri:https://ontacthealth.s3.ap-northeast-2.amazonaws.com/DV154717/K8SKNG94",
+    "wadouri:https://ontacthealth.s3.ap-northeast-2.amazonaws.com/DV154717/K8SKNGH6",
 ];
 
+const stack2 = [
+  "wadouri:https://ontacthealth.s3.ap-northeast-2.amazonaws.com/DV154717/K91AIIP8",
+  "wadouri:https://ontacthealth.s3.ap-northeast-2.amazonaws.com/DV154717/K91AJ89A",
+  "wadouri:https://ontacthealth.s3.ap-northeast-2.amazonaws.com/DV154717/K91AJA9C",
+  "wadouri:https://ontacthealth.s3.ap-northeast-2.amazonaws.com/DV154717/K91AJBHE",
+  "wadouri:https://ontacthealth.s3.ap-northeast-2.amazonaws.com/DV154717/K91AJE9G",
+  "wadouri:https://ontacthealth.s3.ap-northeast-2.amazonaws.com/DV154717/K91AJGPI",
+  "wadouri:https://ontacthealth.s3.ap-northeast-2.amazonaws.com/DV154717/K91AJI9K",
+  "wadouri:https://ontacthealth.s3.ap-northeast-2.amazonaws.com/DV154717/K91ALP1M",
+  "wadouri:https://ontacthealth.s3.ap-northeast-2.amazonaws.com/DV154717/K91ALQHO",
+  "wadouri:https://ontacthealth.s3.ap-northeast-2.amazonaws.com/DV154717/K91ALRPQ",
+  "wadouri:https://ontacthealth.s3.ap-northeast-2.amazonaws.com/DV154717/K91ALTHS",
+  "wadouri:https://ontacthealth.s3.ap-northeast-2.amazonaws.com/DV154717/K91AM01U",
+  "wadouri:https://ontacthealth.s3.ap-northeast-2.amazonaws.com/DV154717/K91AM1Q0",
+]
+
 function OHViewport(){
-    const state = {
-        tools: [
-          // Mouse
-          {
-            name: 'Wwwc',
-            mode: 'active',
-            modeOptions: { mouseButtonMask: 1 },
-          },
-          {
-            name: 'Zoom',
-            mode: 'active',
-            modeOptions: { mouseButtonMask: 2 },
-          },
-          {
-            name: 'Pan',
-            mode: 'active',
-            modeOptions: { mouseButtonMask: 4 },
-          },
-          'Length',
-          'Angle',
-          'Bidirectional',
-          'FreehandRoi',
-          'Eraser',
-          // Scroll
-          { name: 'StackScrollMouseWheel', mode: 'active' },
-          // Touch
-          { name: 'PanMultiTouch', mode: 'active' },
-          { name: 'ZoomTouchPinch', mode: 'active' },
-          { name: 'StackScrollMultiTouch', mode: 'active' },
-        ],
-        imageIds: stack1,
-        //Form
-        activeTool: 'Wwwc',
-        isPlaying: false,
-        imageIdIndex: 0,
-        frameRate: 10,
-      };
+      const [tools, setTools] = useState([          
+        // Mouse
+        {
+          name: 'Wwwc',
+          mode: 'active',
+          modeOptions: { mouseButtonMask: 1 },
+        },
+        {
+          name: 'Zoom',
+          mode: 'active',
+          modeOptions: { mouseButtonMask: 2 },
+        },
+        {
+          name: 'Pan',
+          mode: 'active',
+          modeOptions: { mouseButtonMask: 4 },
+        },
+        'Length',
+        'Angle',
+        'Bidirectional',
+        'FreehandRoi',
+        'Eraser',
+        // Scroll
+        { name: 'StackScrollMouseWheel', mode: 'active' },
+        // Touch
+        { name: 'PanMultiTouch', mode: 'active' },
+        { name: 'ZoomTouchPinch', mode: 'active' },
+        { name: 'StackScrollMultiTouch', mode: 'active' },])
 
-      const [playState, setPlayState] = useState(state.isPlaying);
-      const [active, setActive] = useState(state.activeTool);
-      const [frameRate, setFrameRate] = useState(state.frameRate);
+      const [imageIds, setImageIds] = useState(stack1);
+      const [imageIdIndex, setImageIdIndex] = useState(0);
+      const [activeViewportIndex, setActiveViewportIndex] = useState(0);
+      const [viewports, setViewports] = useState([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+      const [isPlaying, setIsPlaying] = useState(false);
+      const [activeTool, setActiveTool] = useState("Wwwc");
+      const [frameRate, setFrameRate] = useState(10);
 
+      // handle Active Tools
       const handleChange = e => {
-        setActive(e.target.value);
+        setActiveTool(e.target.value);
       }
       
+      // handle FrameRate
       const handleFrameRate = e => {
         const frameRateInput = parseInt(e.target.value);
         const frameRate = Math.max(Math.min(frameRateInput, 100), 1);
@@ -66,126 +93,66 @@ function OHViewport(){
         setFrameRate(frameRate);
       }
 
+      // handle image stack
+      const handleStack = (e) =>{
+        const selectedStack = parseInt(e.target.value) === 1 ? stack1 : stack2;
+
+        setImageIds(selectedStack);
+        setImageIdIndex(0);
+      }
+
+
     return(
-        <ViewportBox>    
+        <ViewportContainer>    
             <ToolBox>
-              <ActiveToolBox>
-                <h4>Active Tool:</h4>
-                <select 
-                value={active}
-                onChange={handleChange}
-                >
-                  <option value="Wwwc">Wwwc</option>
-                  <option value="Zoom">Zoom</option>
-                  <option value="Pan">Pan</option>
-                  <option value="Length">Length</option>
-                  <option value="Angle">Angle</option>
-                  <option value="Bidirectional">Bidirectional</option>
-                  <option value="FreehandRoi">Freehand</option>
-                  <option value="Eraser">Eraser</option>
-                </select>
-              </ActiveToolBox>
-              <PlayControllerBox>
-                <button onClick={() => setPlayState(!playState)}>
-                    {playState ? <PauseBtn /> : <StartBtn />}
-                </button>
-              </PlayControllerBox>
-              <FrameRateBox>
-                <h4>Frame rate:</h4>
-                <input
-                type="number"
-                value={frameRate}
-                onChange={handleFrameRate}
-                />
-              </FrameRateBox>
-              <StackBox>
-                <label>Image ID stack:</label>
-                <select
-                defaultValue={1}
-                // onChange={handleStack}
-                >
-                  <option value="1">Stack 1</option>
-                  <option value="2">Stack 2</option>
-                </select>
-              </StackBox>
+              <ViewportTools 
+              activeTool={activeTool}
+              handleChange={handleChange}
+              setIsPlaying={setIsPlaying}
+              isPlaying={isPlaying}
+              frameRate={frameRate}
+              handleFrameRate={handleFrameRate}
+              handleStack={handleStack}
+              />
             </ToolBox>
-            <CornerstoneViewport
-            tools={state.tools}
-            imageIds={state.imageIds}
-            imageIdIndex={state.imageIdIndex}
-            isPlaying={playState}
-            activeTool={active}
-            frameRate={frameRate}
-            // viewportOverlayComponent={CustomOverlay}
-            />
-        </ViewportBox>
+            <ViewportBox>
+              {viewports.map(viewport => (
+              <ViewportLayer 
+              key={viewport}
+              tools={tools}
+              imageIds={imageIds}
+              imageIdIndex={viewport}
+              activeTool={activeTool}
+              isPlaying={isPlaying}
+              frameRate={frameRate}
+              setViewportActive={()=> setActiveViewportIndex(viewport)}
+              />
+              ))}
+            </ViewportBox>
+        </ViewportContainer>
     )
 }
 export default OHViewport;
 
-const ViewportBox = styled.div`
+const ViewportContainer = styled.div`
     width: 100%;
     height: 60vh;
     margin: 0 auto;
     display: flex;
+    flex-direction: column;
 `;
 
 const ToolBox = styled.div`
   padding: 0 1rem;
   color: #000080;
-`;
-const ActiveToolBox = styled.div`
   display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  padding: 10px 5px;
-
-  h4{
-    padding-right: 10px;
-  }
-`;
-
-const PlayControllerBox = styled.div`
-  width: 300px;
-  height: auto;
-  padding: 10px 15px;
-  background-color: #fefefe;
-  border: 1px solid #a7c7e7;
-  display: flex;
-  align-items: center;
   justify-content: center;
-
-  button{
-    cursor: pointer;
-    background-color: transparent;
-    color: #000080;
-    font-weight: bold;
-    border: none;
-    outline: none;
-  }
+  align-items: center;
+  gap: 1rem;
 `;
 
-const StartBtn = styled.span`
-  display: block;
-  border-top: 10px solid transparent;
-  border-bottom: 10px solid transparent;
-  border-left: 15px solid #000080;
-`;
-
-const PauseBtn = styled.span`
-  display: block;
-  width: 15px;
-  height: 20px;
-  box-sizing: border-box;
-  border-left: 5px solid #000080;
-  border-right: 5px solid #000080;
-`;
-
-const FrameRateBox = styled(ActiveToolBox)`
-`;
-const StackBox = styled(ActiveToolBox)`
-  label{
-    font-weight: bold;
-    padding-right: 10px;
-  }
+const ViewportBox = styled.div`
+  padding: 10px 20px;
+  display: grid;
+  grid-template-columns: repeat(4, 25%);
 `;
