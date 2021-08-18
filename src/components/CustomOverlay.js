@@ -11,14 +11,6 @@ const OverlayBlock = styled.div`
 `;
 
 function CustomOverlay(props) {
-    const propTypes = {
-        scale: PropTypes.number.isRequired,
-        windowWidth: PropTypes.number.isRequired,
-        windowCenter: PropTypes.number.isRequired,
-        imageId: PropTypes.string.isRequired,
-        imageIndex: PropTypes.number.isRequired,
-        stackSize: PropTypes.number.isRequired,
-    }
 
     return(
         <OverlayBlock>
@@ -34,6 +26,15 @@ function CustomOverlay(props) {
             )}
         </OverlayBlock>
     )
+}
+
+CustomOverlay.propTypes = {
+    scale: PropTypes.number.isRequired,
+    windowWidth: PropTypes.number.isRequired,
+    windowCenter: PropTypes.number.isRequired,
+    imageId: PropTypes.string.isRequired,
+    imageIndex: PropTypes.number.isRequired,
+    stackSize: PropTypes.number.isRequired,
 }
 
 export default CustomOverlay;

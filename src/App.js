@@ -13,16 +13,14 @@ const Globalstyle = createGlobalStyle`
     text-align: center;
   }
 `;
-
 function App() {
-  
   initCornerstone();
-
+  
   return (
     <>
       <Globalstyle/>
       <h1>Ontact Health DICOM Viewer</h1>
-      <OHViewport/>
+      <OHViewport />
     </>
   );
 }
