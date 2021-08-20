@@ -11,9 +11,7 @@ export default function initCornerstone() {
     cornerstoneTools.external.Hammer = Hammer;
     cornerstoneTools.external.cornerstoneMath = cornerstoneMath;
     //
-    cornerstoneTools.init({globalToolSyncEnabled: true});
-    cornerstone.getEnabledElements();
-
+    cornerstoneTools.init();
 
   // Image Loader
   cornerstoneWADOImageLoader.external.cornerstone = cornerstone;

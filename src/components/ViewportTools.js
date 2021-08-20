@@ -1,105 +1,80 @@
 import styled from 'styled-components';
 
-export default function ViewportTools({activeTool, handleChange, setIsPlaying, isPlaying, frameRate, handleFrameRate, handleStack}) {
-    return(
+export default function ViewportTools(
+  {setIsPlaying, isPlaying, frameRate, increaseFrame, decreaseFrame, selectAllViewport}) {
+  return(
         <ViewportToolBox>
             <ActiveToolBox>
-                <h4>Active Tool:</h4>
-                <select 
-                value={activeTool}
-                onChange={handleChange}
-                >
-                  <option value="Wwwc">Wwwc</option>
-                  <option value="Zoom">Zoom</option>
-                  <option value="Pan">Pan</option>
-                  <option value="Length">Length</option>
-                  <option value="Angle">Angle</option>
-                  <option value="Bidirectional">Bidirectional</option>
-                  <option value="FreehandRoi">Freehand</option>
-                  <option value="Eraser">Eraser</option>
-                </select>
+              <TapMenu onClick={selectAllViewport}>Select All</TapMenu>
+              <TapMenu>Select Page</TapMenu>
+              <TapMenu>Delete</TapMenu>
             </ActiveToolBox>
             <PlayControllerBox>
-                <button onClick={() => setIsPlaying(!isPlaying)}>
-                    {isPlaying ? <PauseBtn /> : <StartBtn />}
-                </button>
+                <TapMenu onClick={() => setIsPlaying(!isPlaying)}>
+                    {isPlaying ? "Freeze" : "Play"}
+                </TapMenu>
             </PlayControllerBox>
             <FrameRateBox>
-                <h4>Frame rate:</h4>
-                <input
-                type="number"
-                value={frameRate}
-                onChange={handleFrameRate}
-                />
+                <TapMenu>
+                  <FrameControl value={frameRate} onClick={decreaseFrame}>◀</FrameControl>
+                  <FrameControl value={frameRate} onClick={increaseFrame}>▶</FrameControl>
+                  Speed/Frame
+                </TapMenu>
             </FrameRateBox>
             <StackBox>
-                <label>Image ID stack:</label>
-                <select
-                defaultValue={1}
-                onChange={handleStack}
-                >
-                  <option value="1">Stack 1</option>
-                  <option value="2">Stack 2</option>
-                </select>
+              <TapMenu>Analyze</TapMenu>
             </StackBox>
         </ViewportToolBox>
     );
 }
 
 const ViewportToolBox = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const TapMenu = styled.div`
+  padding: 5px;
+  padding-right: 10px;
+  font-weight: bold;
+  border: 2px solid #000080;
+  border-bottom: none;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  cursor: pointer;
+  :not(:last-of-type){
+    border-right: none;
+  }
 `;
 
 const ActiveToolBox = styled.div`
   display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  padding: 10px 5px;
-
-  h4{
-    padding-right: 10px;
-  }
-`;
-
-const PlayControllerBox = styled.div`
-  width: 250px;
-  height: auto;
-  padding: 10px 15px;
-  background-color: #fefefe;
-  border: 1px solid #a7c7e7;
-  display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  padding: 10px 0;
+`;
 
-  button{
-    cursor: pointer;
-    background-color: transparent;
-    color: #000080;
-    font-weight: bold;
-    border: none;
-    outline: none;
+const PlayControllerBox = styled(ActiveToolBox)`
+  div{
+    border-left: none;
+    border-right: none;
+    width: 65px;
+    text-align: center;
   }
-`;
-
-const StartBtn = styled.span`
-  display: block;
-  border-top: 10px solid transparent;
-  border-bottom: 10px solid transparent;
-  border-left: 15px solid #000080;
-`;
-
-const PauseBtn = styled.span`
-  display: block;
-  width: 15px;
-  height: 20px;
-  box-sizing: border-box;
-  border-left: 5px solid #000080;
-  border-right: 5px solid #000080;
 `;
 
 const FrameRateBox = styled(ActiveToolBox)`
+  div{
+    border-right: none;
+  }
+`;
+
+const FrameControl = styled.button`
+  border: none;
+  outline: none;
+  background-color: transparent;
 `;
 const StackBox = styled(ActiveToolBox)`
   label{

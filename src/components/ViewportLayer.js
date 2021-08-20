@@ -1,15 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
-import CornerstoneViewport from 'react-cornerstone-viewport';
+import CornerstoneViewport from '../extenstion/index';
 import cornerstoneWADOImageLoader from 'cornerstone-wado-image-loader';
+import styled from 'styled-components';
 
-export default function ViewportLayer({tools, imageIds, imageIdIndex, isPlaying, setIsPlaying, activeTool, frameRate, activeViewportIndex, setViewportActive}){
-    const [dicomImage, setDicomImage] = useState([]);
-    // const element = useRef();
+export default function ViewportLayer({tools, activeTool ,imageIds, imageIdIndex, isPlaying, frameRate, selected}){
+    const [dicomImage, setDicomImage] = useState(["wadouri:https://ontacthealth.s3.ap-northeast-2.amazonaws.com/dicomfiles/Apical+5+Chamber+2D.dcm"]);
+    const [isActive, setIsActive] = useState(false);
+    const element = useRef();
 
     useEffect(() => {
         const loadImage = (imageIds) =>{
             cornerstoneWADOImageLoader.wadouri.dataSetCacheManager.load(imageIds, 
                 cornerstoneWADOImageLoader.internal.xhrRequest).then(function(dataSet){
+
                     const numFrames = dataSet.intString('x00280008');
                     
                     const imageUrl = [];
@@ -26,45 +29,31 @@ export default function ViewportLayer({tools, imageIds, imageIdIndex, isPlaying,
 
                     setDicomImage(imageUrl);
             })
+            return () => {
+                setDicomImage([]);
+            }
         }
         
         loadImage(imageIds);
-    },[]);
 
-    // const onElementEnabled = elementEnabledEvt => {
-    //     const cornerstoneElement = elementEnabledEvt.detail.element
+    },[imageIds]);
     
-    //     // Wait for image to render, then invert it
-    //     cornerstoneElement.addEventListener(
-    //       'cornerstoneimagerendered',
-    //       imageRenderedEvent => {
-    //         const viewport = imageRenderedEvent.detail.viewport;
-    //         const invertedViewport = Object.assign({}, viewport, {
-    //           invert: true,
-    //         });
-    
-    //         cornerstone.setViewport(cornerstoneElement, invertedViewport);
-    //       }
-    //     );
-    //   }
-
-    // console.log(element.current);
-
     return(
-        <div>
+        <ViewportSelector selected={selected} active={isActive} onClick={() => setIsActive(!isActive)}>
             <CornerstoneViewport
-            // ref={element}
+            ref={element}
             style={{minWidth: '50%', height: '256px', flex:'1'}}
             tools={tools}
+            activeTool={activeTool}
             imageIds={dicomImage} 
             imageIdIndex={imageIdIndex}
             isPlaying={isPlaying}
-            activeTool={activeTool}
             frameRate={frameRate}
-            className={activeViewportIndex === 0 ? 'active' : 'none'}
-            setViewportActive={setViewportActive}
-            // onElementEnabled={onElementEnabled}
             />
-        </div>
+        </ViewportSelector>
     )
 }
+
+const ViewportSelector = styled.div`
+    border: ${props => props.active === true || props.selected === true ? `2px solid dodgerblue` : 'none'};
+`;
