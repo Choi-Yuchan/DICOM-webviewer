@@ -1,93 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import ViewportLayer from './ViewportLayer';
 import ViewportTools from './ViewportTools';
-import { state } from '../data/mockdata';
-import { Route, Switch, Link } from 'react-router-dom';
 
-
-function OHViewport(){
-  const [dicom, setDicom] = useState(state);
+function OHViewport({dicom, setDicom, loading, postsPerPage, totalPosts, paginate, currentPage}){
   const [isPlaying, setIsPlaying] = useState(true);
   const [frameRate, setFrameRate] = useState(20);
-  const [urlIndex, setUrlIndex] = useState([]);
   const [activeTool, setActiveTool] = useState("Wwwc");
-
   const [selectedAll, isSelectedAll] = useState(false);
-  const [selectedPage, isSelectedPage] = useState(false);
-
-  const [isPage, setIsPage] = useState([]);
-  const [newPage, makeNewPage] = useState([]);
-  // const isMounted = useRef(false); // router 이동시 memory leak error 
-
-  const tools = [
-    // Mouse
-  {
-    name: 'Wwwc',
-    mode: 'active',
-    modeOptions: { mouseButtonMask: 1 },
-  },
-  {
-    name: 'Zoom',
-    mode: 'active',
-    modeOptions: { mouseButtonMask: 2 },
-  },
-  {
-    name: 'Pan',
-    mode: 'active',
-    modeOptions: { mouseButtonMask: 4 },
-  },
-  'Length',
-  'Angle',
-  'Bidirectional',
-  'FreehandRoi',
-  'Eraser',
-  // Scroll
-  { name: 'StackScrollMouseWheel', mode: 'active' },
-  // Touch
-  { name: 'PanMultiTouch', mode: 'active' },
-  { name: 'ZoomTouchPinch', mode: 'active' },
-  { name: 'StackScrollMultiTouch', mode: 'active' },
-  ]
+  const [selectedPage, isSelectedPage] =useState(false);
+  const [selected, isSelected] = useState();
   const imageIdIndex = 0;
-
-  useEffect(() => {
-    // isMounted.current = true;
-    const getDicom = () => {
-      setDicom(state);
-    }
-
-    getDicom();
-    makeArray(dicom.url);
-    seperatePage(dicom.url);
-
-    // return () => {isMounted.current = false};
-  },[]);
-
-  // state.url의 index 생성
-  const makeArray = async (url) => {
-    const index = url.length-1;
-    const indexArray = [];
-    for(let i = 0; i <= index; i++){
-      indexArray.push(i);
-    }
-
-    setUrlIndex(() => indexArray);
-  };
-
-  //seperate viewport page
-  const seperatePage = (url) => {
-    const contents = url;
-    if(urlIndex.length <= 9){
-      setIsPage(() => contents);
-    }
-    if(urlIndex.length > 9){
-      setIsPage(() => contents.slice(0, 9));
-      makeNewPage(() => contents.slice(9, 18));
-      }
-  };
-
-  console.log(newPage);
+  //numbering pages
+  const pageNumbers = [];
+  for(let i =1; i <= Math.ceil(totalPosts / postsPerPage); i++){
+    pageNumbers.push(i)
+  }
 
   // handle Active Tools
   const handleChange = e => {
@@ -113,15 +41,32 @@ function OHViewport(){
     isSelectedAll(prev => !prev);
   }
 
-  //select page
   const selectPage = () => {
-    isSelectedPage(prev => !prev);
+      for(let i = 0; i <= dicom.length; i++){
+        isSelectedPage(prev => !prev);
+      }  
   }
+  const resetSelected = (i) => {
+    if(currentPage !== pageNumbers[i]){
+      isSelectedPage(false);
+    }
+  }
+  
+  // delete selected viewport
+  const deleteViewport = (id) => {
+    console.log(id);
+    if(selected === true || selectedAll === true || selectedPage === true){
+        const newData = dicom.filter(data => data.id !== id);
+        console.log("Delete!" , newData);
+        setDicom(newData);
+      }
+    }
 
   return(
       <ViewportContainer>
         <ToolBox>
-          <ViewportTools 
+          <ViewportTools
+          dicom={dicom} 
           handleChange={handleChange}
           isPlaying={isPlaying}
           setIsPlaying={setIsPlaying}
@@ -130,48 +75,38 @@ function OHViewport(){
           decreaseFrame={decreaseFrame}
           selectAllViewport={selectViewport}
           selectPage={selectPage}
+          deleteViewport={() => deleteViewport(dicom.id)}
           />
           <PageController>
             <ul> Review Page
-              <PageBtn to="/">◀</PageBtn>
-              <PageBtn to="/page2">▶</PageBtn>
+                <PageLi>
+                  <PageBtn onClick={() => {
+                    paginate(1);
+                    resetSelected(0);}}>◀</PageBtn>
+                  <PageBtn onClick={() => {
+                    paginate(2);
+                    resetSelected(1);}}>▶</PageBtn>
+                </PageLi>
             </ul>
           </PageController>    
         </ToolBox>
-        <Switch>       
-          <Route exact path="/">
-            <ViewportBox>
-              {isPage.map((data, index) => (
-              <ViewportLayer 
-              key={index}
-              tools={tools}
-              imageIds={data}
-              imageIdIndex={imageIdIndex}
-              isPlaying={isPlaying}
-              frameRate={frameRate}
-              activeTool={activeTool}
-              selected={selectedAll}
-              />
-              ))}
-            </ViewportBox>
-          </Route>
-          <Route path="/page2">
-            <ViewportBox>
-              {newPage.map((data, index) => (
-              <ViewportLayer 
-              key={index}
-              tools={tools}
-              imageIds={data}
-              imageIdIndex={imageIdIndex}
-              isPlaying={isPlaying}
-              frameRate={frameRate}
-              activeTool={activeTool}
-              selected={selectedAll}
-              />
-              ))}
-            </ViewportBox>
-          </Route>     
-        </Switch>
+        {loading ? <div>Loading...</div> : 
+        <ViewportBox>
+          {dicom.map((dicom) => (
+          <ViewportLayer 
+          key={dicom.id}
+          imageIds={dicom.url}
+          imageIdIndex={imageIdIndex}
+          isPlaying={isPlaying}
+          frameRate={frameRate}
+          activeTool={activeTool}
+          selectedAll={selectedAll}
+          selectedPage={selectedPage}
+          isSelected={isSelected}
+          />
+          ))}
+        </ViewportBox>
+        }
       </ViewportContainer>
   )
 }
@@ -180,7 +115,7 @@ export default OHViewport;
 
 const ViewportContainer = styled.div`
     width: 100%;
-    height: 100vh;
+    height: auto;
     overflow: hidden;
     margin: 0 auto;
     display: flex;
@@ -194,14 +129,15 @@ const ToolBox = styled.div`
   justify-content: center;
   align-items: center;
   gap: 1rem;
-  background-color: #a7c7e7;
+  border-bottom: 3px solid #000080;
 `;
 
 const ViewportBox = styled.div`
   padding: 10px 20px;
   display: grid;
   grid-gap: 5px;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 4fr));
+  grid-template-columns: repeat(auto-fit, minmax(400px, 4fr));
+  background-color: #d4e6f1;
 `;
 
 const PageController = styled.nav`
@@ -216,11 +152,19 @@ const PageController = styled.nav`
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 5px;
+    gap: 10px;
     padding-left: 0;
   }
 `;
-
-const PageBtn = styled(Link)`
+const PageLi = styled.li`
+  cursor: pointer;
+`;
+const PageBtn = styled.button`
+  cursor: pointer;
+  font-weight: bold;
+  color: #000080;
+  outline: none;
+  background-color: transparent;
+  border: none;
   text-decoration: none;
 `;

@@ -1,13 +1,14 @@
+import React from 'react';
 import styled from 'styled-components';
 
 export default function ViewportTools(
-  {setIsPlaying, isPlaying, frameRate, increaseFrame, decreaseFrame, selectAllViewport, selectPage}) {
-  return(
+  {setIsPlaying, isPlaying, frameRate, increaseFrame, decreaseFrame, selectAllViewport, selectPage, deleteViewport}) {
+    return(
         <ViewportToolBox>
             <ActiveToolBox>
               <TapMenu onClick={selectAllViewport}>Select All</TapMenu>
               <TapMenu onClick={selectPage}>Select Page</TapMenu>
-              <TapMenu>Delete</TapMenu>
+              <TapMenu onClick={deleteViewport}>Delete</TapMenu>
             </ActiveToolBox>
             <PlayControllerBox>
                 <TapMenu onClick={() => setIsPlaying(!isPlaying)}>
@@ -36,6 +37,8 @@ const ViewportToolBox = styled.div`
 `;
 
 const TapMenu = styled.div`
+  position: relative;
+  margin-right: 2px;
   padding: 5px;
   padding-right: 10px;
   font-weight: bold;
@@ -43,9 +46,25 @@ const TapMenu = styled.div`
   border-bottom: none;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
+  box-shadow: 2px -1px 1px darkgrey;
   cursor: pointer;
-  :not(:last-of-type){
-    border-right: none;
+  border-right: none;
+  transition: 0.5s ease-out;
+
+  
+  :hover{
+    color: #fefefe;
+    ::after{
+    content:'';
+    width:100%;
+    height: 35px;
+    display:block;
+    position: absolute;
+    top:0;
+    left:0;
+    background-image: linear-gradient(#000080, #fefefe);
+    z-index: -1;
+  }
   }
 `;
 
@@ -58,7 +77,6 @@ const ActiveToolBox = styled.div`
 
 const PlayControllerBox = styled(ActiveToolBox)`
   div{
-    border-left: none;
     border-right: none;
     width: 65px;
     text-align: center;
@@ -66,19 +84,19 @@ const PlayControllerBox = styled(ActiveToolBox)`
 `;
 
 const FrameRateBox = styled(ActiveToolBox)`
-  div{
-    border-right: none;
-  }
 `;
 
 const FrameControl = styled.button`
+  color: #000080;
   border: none;
   outline: none;
   background-color: transparent;
+  :hover{
+    color: #fefefe;
+  }
 `;
 const StackBox = styled(ActiveToolBox)`
-  label{
-    font-weight: bold;
-    padding-right: 10px;
+  div{
+    border-right: 2px solid #000080;
   }
 `;
