@@ -3,14 +3,16 @@ import CornerstoneViewport from '../extenstion/index';
 import cornerstoneWADOImageLoader from 'cornerstone-wado-image-loader';
 import styled from 'styled-components';
 
-export default function ViewportLayer({tools, activeTool ,imageIds, imageIdIndex, isPlaying, frameRate, selected}){
+function ViewportLayer({tools, activeTool ,imageIds, imageIdIndex, isPlaying, frameRate, selected}){
     const [dicomImage, setDicomImage] = useState(["wadouri:https://ontacthealth.s3.ap-northeast-2.amazonaws.com/dicomfiles/Apical+5+Chamber+2D.dcm"]);
     const [isActive, setIsActive] = useState(false);
-    const element = useRef();
+    const element = useRef(true); 
 
     useEffect(() => {
-        const loadImage = (imageIds) =>{
-            cornerstoneWADOImageLoader.wadouri.dataSetCacheManager.load(imageIds, 
+        element.current = true;
+
+        const loadImage = async (imageIds) =>{
+            await cornerstoneWADOImageLoader.wadouri.dataSetCacheManager.load(imageIds, 
                 cornerstoneWADOImageLoader.internal.xhrRequest).then(function(dataSet){
 
                     const numFrames = dataSet.intString('x00280008');
@@ -26,15 +28,13 @@ export default function ViewportLayer({tools, activeTool ,imageIds, imageIdIndex
                     if(!numFrames){
                         imageUrl.push(imageIdRoot);
                     }
-
-                    setDicomImage(imageUrl);
+                    
+                        setDicomImage(() => imageUrl);
             })
-            return () => {
-                setDicomImage([]);
-            }
         }
-        
         loadImage(imageIds);
+
+        return () => { element.current = false; } // cleanup function
 
     },[imageIds]);
     
@@ -54,6 +54,8 @@ export default function ViewportLayer({tools, activeTool ,imageIds, imageIdIndex
     )
 }
 
+export default ViewportLayer;
+
 const ViewportSelector = styled.div`
-    border: ${props => props.active === true || props.selected === true ? `2px solid dodgerblue` : 'none'};
+    border: ${props => props.active === true || props.selected === true ? `3.5px solid dodgerblue` : 'none'};
 `;

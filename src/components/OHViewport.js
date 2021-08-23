@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import ViewportLayer from './ViewportLayer';
 import ViewportTools from './ViewportTools';
@@ -7,42 +7,87 @@ import { Route, Switch, Link } from 'react-router-dom';
 
 
 function OHViewport(){
-  const [dicom, setDicom] = useState(state) // setDicom 에 state data 받아서 넣기
+  const [dicom, setDicom] = useState(state);
   const [isPlaying, setIsPlaying] = useState(true);
   const [frameRate, setFrameRate] = useState(20);
-  const [urlIndex, setUrlIndex] = useState(0);
+  const [urlIndex, setUrlIndex] = useState([]);
   const [activeTool, setActiveTool] = useState("Wwwc");
-  const [selectAll, isSelectAll] = useState(false);
+
+  const [selectedAll, isSelectedAll] = useState(false);
+  const [selectedPage, isSelectedPage] = useState(false);
+
   const [isPage, setIsPage] = useState([]);
   const [newPage, makeNewPage] = useState([]);
+  // const isMounted = useRef(false); // router 이동시 memory leak error 
+
+  const tools = [
+    // Mouse
+  {
+    name: 'Wwwc',
+    mode: 'active',
+    modeOptions: { mouseButtonMask: 1 },
+  },
+  {
+    name: 'Zoom',
+    mode: 'active',
+    modeOptions: { mouseButtonMask: 2 },
+  },
+  {
+    name: 'Pan',
+    mode: 'active',
+    modeOptions: { mouseButtonMask: 4 },
+  },
+  'Length',
+  'Angle',
+  'Bidirectional',
+  'FreehandRoi',
+  'Eraser',
+  // Scroll
+  { name: 'StackScrollMouseWheel', mode: 'active' },
+  // Touch
+  { name: 'PanMultiTouch', mode: 'active' },
+  { name: 'ZoomTouchPinch', mode: 'active' },
+  { name: 'StackScrollMultiTouch', mode: 'active' },
+  ]
+  const imageIdIndex = 0;
 
   useEffect(() => {
+    // isMounted.current = true;
+    const getDicom = () => {
+      setDicom(state);
+    }
+
+    getDicom();
     makeArray(dicom.url);
     seperatePage(dicom.url);
+
+    // return () => {isMounted.current = false};
   },[]);
 
   // state.url의 index 생성
-  const makeArray = (url) => {
+  const makeArray = async (url) => {
     const index = url.length-1;
     const indexArray = [];
     for(let i = 0; i <= index; i++){
       indexArray.push(i);
     }
 
-    setUrlIndex(indexArray);
-  }
+    setUrlIndex(() => indexArray);
+  };
 
   //seperate viewport page
-  const seperatePage = useCallback((url) => {
-    const contents = url
+  const seperatePage = (url) => {
+    const contents = url;
     if(urlIndex.length <= 9){
-      setIsPage(contents);
+      setIsPage(() => contents);
     }
     if(urlIndex.length > 9){
-      setIsPage(contents.slice(0, 9));
-      makeNewPage(contents.slice(9));
-    }
-  },[urlIndex]);
+      setIsPage(() => contents.slice(0, 9));
+      makeNewPage(() => contents.slice(9, 18));
+      }
+  };
+
+  console.log(newPage);
 
   // handle Active Tools
   const handleChange = e => {
@@ -65,10 +110,13 @@ function OHViewport(){
 
   //select viewport
   const selectViewport = () => {
-    isSelectAll(prev => !prev);
+    isSelectedAll(prev => !prev);
   }
-  
 
+  //select page
+  const selectPage = () => {
+    isSelectedPage(prev => !prev);
+  }
 
   return(
       <ViewportContainer>
@@ -81,6 +129,7 @@ function OHViewport(){
           increaseFrame={increaseFrame}
           decreaseFrame={decreaseFrame}
           selectAllViewport={selectViewport}
+          selectPage={selectPage}
           />
           <PageController>
             <ul> Review Page
@@ -89,47 +138,44 @@ function OHViewport(){
             </ul>
           </PageController>    
         </ToolBox>
-        <Switch>
-          {isPage &&         
+        <Switch>       
           <Route exact path="/">
             <ViewportBox>
-              {isPage.map(data => (
+              {isPage.map((data, index) => (
               <ViewportLayer 
-              key={data}
-              tools={dicom.tools}
+              key={index}
+              tools={tools}
               imageIds={data}
-              imageIdIndex={dicom.imageIdIndex}
+              imageIdIndex={imageIdIndex}
               isPlaying={isPlaying}
               frameRate={frameRate}
               activeTool={activeTool}
-              selected={selectAll}
+              selected={selectedAll}
               />
               ))}
             </ViewportBox>
           </Route>
-          }
-          {newPage &&         
           <Route path="/page2">
             <ViewportBox>
-              {newPage.map(data => (
+              {newPage.map((data, index) => (
               <ViewportLayer 
-              key={data}
-              tools={dicom.tools}
+              key={index}
+              tools={tools}
               imageIds={data}
-              imageIdIndex={dicom.imageIdIndex}
+              imageIdIndex={imageIdIndex}
               isPlaying={isPlaying}
               frameRate={frameRate}
               activeTool={activeTool}
-              selected={selectAll}
+              selected={selectedAll}
               />
               ))}
             </ViewportBox>
-          </Route>
-          }
+          </Route>     
         </Switch>
       </ViewportContainer>
   )
 }
+
 export default OHViewport;
 
 const ViewportContainer = styled.div`

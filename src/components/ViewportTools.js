@@ -1,12 +1,12 @@
 import styled from 'styled-components';
 
 export default function ViewportTools(
-  {setIsPlaying, isPlaying, frameRate, increaseFrame, decreaseFrame, selectAllViewport}) {
+  {setIsPlaying, isPlaying, frameRate, increaseFrame, decreaseFrame, selectAllViewport, selectPage}) {
   return(
         <ViewportToolBox>
             <ActiveToolBox>
               <TapMenu onClick={selectAllViewport}>Select All</TapMenu>
-              <TapMenu>Select Page</TapMenu>
+              <TapMenu onClick={selectPage}>Select Page</TapMenu>
               <TapMenu>Delete</TapMenu>
             </ActiveToolBox>
             <PlayControllerBox>
