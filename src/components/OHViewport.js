@@ -3,13 +3,12 @@ import styled from 'styled-components';
 import ViewportLayer from './ViewportLayer';
 import ViewportTools from './ViewportTools';
 
-function OHViewport({dicom, setDicom, loading, postsPerPage, totalPosts, paginate, currentPage}){
+function OHViewport({dicom, loading, postsPerPage, totalPosts, paginate, selectedAll, 
+  selectedPage, deleteViewport, selectViewport, selectPage, resetSelected, isSelected}){
   const [isPlaying, setIsPlaying] = useState(true);
   const [frameRate, setFrameRate] = useState(20);
   const [activeTool, setActiveTool] = useState("Wwwc");
-  const [selectedAll, isSelectedAll] = useState(false);
-  const [selectedPage, isSelectedPage] =useState(false);
-  const [selected, isSelected] = useState();
+
   const imageIdIndex = 0;
   //numbering pages
   const pageNumbers = [];
@@ -36,32 +35,6 @@ function OHViewport({dicom, setDicom, loading, postsPerPage, totalPosts, paginat
     setFrameRate(() => frameRate - 5);
   }
 
-  //select viewport
-  const selectViewport = () => {
-    isSelectedAll(prev => !prev);
-  }
-
-  const selectPage = () => {
-      for(let i = 0; i <= dicom.length; i++){
-        isSelectedPage(prev => !prev);
-      }  
-  }
-  const resetSelected = (i) => {
-    if(currentPage !== pageNumbers[i]){
-      isSelectedPage(false);
-    }
-  }
-  
-  // delete selected viewport
-  const deleteViewport = (id) => {
-    console.log(id);
-    if(selected === true || selectedAll === true || selectedPage === true){
-        const newData = dicom.filter(data => data.id !== id);
-        console.log("Delete!" , newData);
-        setDicom(newData);
-      }
-    }
-
   return(
       <ViewportContainer>
         <ToolBox>
@@ -75,7 +48,7 @@ function OHViewport({dicom, setDicom, loading, postsPerPage, totalPosts, paginat
           decreaseFrame={decreaseFrame}
           selectAllViewport={selectViewport}
           selectPage={selectPage}
-          deleteViewport={() => deleteViewport(dicom.id)}
+          deleteViewport={deleteViewport}
           />
           <PageController>
             <ul> Review Page
